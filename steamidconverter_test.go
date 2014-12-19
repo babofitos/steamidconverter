@@ -9,6 +9,9 @@ var textTests = []struct {
 	out string
 }{
 	{76561197960430077, "STEAM_0:1:82174"},
+	{76561198013163430, "STEAM_0:0:26448851"},
+	{76561197960271553, "STEAM_0:1:2912"},
+	{76561197964812891, "STEAM_0:1:2273581"},
 }
 
 var sixtyFourTests = []struct {
@@ -16,6 +19,9 @@ var sixtyFourTests = []struct {
 	out uint64
 }{
 	{"STEAM_0:1:82174", 76561197960430077},
+	{"STEAM_0:0:26448851", 76561198013163430},
+	{"STEAM_0:1:2912", 76561197960271553},
+	{"STEAM_0:1:2273581", 76561197964812891},
 }
 
 var steam3Tests = []struct {
@@ -23,6 +29,9 @@ var steam3Tests = []struct {
 	out string
 }{
 	{"STEAM_0:1:82174", "[U:1:164349]"},
+	{"STEAM_0:0:26448851", "[U:1:52897702]"},
+	{"STEAM_0:1:2912", "[U:1:5825]"},
+	{"STEAM_0:1:2273581", "[U:1:4547163]"},
 }
 
 func TestConvertToText(t *testing.T) {
