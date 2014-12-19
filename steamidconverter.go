@@ -7,9 +7,6 @@ import (
 	"strings"
 	"net/http"
 	"encoding/json"
-	"errors"
-	"io/ioutil"
-	// "io"
 )
 
 type Steam struct {
@@ -18,6 +15,16 @@ type Steam struct {
 	identifier uint64
 }
 
+type ResponseData struct {
+	Steamid string `json:"steamid"`
+	Success int `json:"success"`
+}
+
+type Response struct {
+	Response ResponseData `json:"response"`
+}
+
+//New returns a new Steam instance storing the api key
 func New(apikey string) *Steam {
 	client := new(http.Client)
 	//Steam identifier
@@ -38,11 +45,11 @@ func (s *Steam) ConvertTo64(text string) (uint64, error) {
 	sidSlice := strings.Split(text, ":")
 	z, err := strconv.ParseUint(sidSlice[2], 10, 0)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("strconv.ParseUint(%q) => _, %q", sidSlice[2], err)
 	}
 	y, err := strconv.ParseUint(sidSlice[1], 10, 0)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("strconv.ParseUint(%q) => _, %q", sidSlice[1], err)
 	}
 	v := s.identifier
 	w := z*2 + v + y
@@ -54,11 +61,11 @@ func (s *Steam) ConvertToSteam3(text string) (string, error) {
 	sidSlice := strings.Split(text, ":")
 	z, err := strconv.ParseUint(sidSlice[2], 10, 0)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("strconv.ParseUint(%q) => _, %q", sidSlice[2], err)
 	}
 	y, err := strconv.ParseUint(sidSlice[1], 10, 0)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("strconv.ParseUint(%q) => _, %q", sidSlice[1], err)
 	}
 	w := z*2 + y
 	return fmt.Sprintf("[U:1:%d]", w), nil
@@ -72,31 +79,18 @@ func (s *Steam) ConvertVanityTo64(vanityUrl string) (uint64, error) {
 		return 0, err
 	}
 	defer resp.Body.Close()
-	type ResponseData struct {
-		Steamid string `json:"steamid"`
-		Success int `json:"success"`
-	}
-	type Response struct {
-		Response ResponseData `json:"response"`
-	}
-	var dat Response
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
+	var response Response
+	dec := json.NewDecoder(resp.Body)
+	if err = dec.Decode(&response); err != nil {
 		return 0, err
 	}
-	err = json.Unmarshal(data, &dat)
-	if err != nil {
-		return 0, err
-	}
-	response := dat
-	success := response.Response.Success
-	if success != 1 {
-		return 0, errors.New("JSON not successful")
+	if success := response.Response.Success; success != 1 {
+		return 0, fmt.Errorf("Response.success != 1 in struct %#v", response)
 	}
 	sid64 := response.Response.Steamid
 	w, err := strconv.ParseUint(sid64, 10, 0)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("strconv.ParseUint(%d) => _, %q", sid64, err)
 	}
 	return w, nil
 }

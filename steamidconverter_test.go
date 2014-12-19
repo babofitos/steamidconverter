@@ -88,13 +88,6 @@ func TestConvertToSteam3(t *testing.T) {
 
 func TestConvertVanityTo64(t *testing.T) {
 	for _, tt := range vanityTests {
-		type ResponseData struct {
-			Steamid string `json:"steamid"`
-			Success int `json:"success"`
-		}
-		type Response struct {
-			Response ResponseData `json:"response"`
-		}
 		var dat Response
 		dat.Response.Steamid = strconv.FormatUint(tt.out, 10)
 		dat.Response.Success = 1
