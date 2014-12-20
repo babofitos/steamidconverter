@@ -2,22 +2,22 @@
 package steamidconverter
 
 import (
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
-	"net/http"
-	"encoding/json"
 )
 
 type Steam struct {
-	apikey string
-	client *http.Client
+	apikey     string
+	client     *http.Client
 	identifier uint64
 }
 
 type ResponseData struct {
 	Steamid string `json:"steamid"`
-	Success int `json:"success"`
+	Success int    `json:"success"`
 }
 
 type Response struct {

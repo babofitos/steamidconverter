@@ -1,16 +1,16 @@
 package steamidconverter
 
 import (
-	"testing"
-	"net/http"
-	"net/url"
-	"net/http/httptest"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"strconv"
+	"testing"
 )
 
 var textTests = []struct {
-	in uint64
+	in  uint64
 	out string
 }{
 	{76561197960430077, "STEAM_0:1:82174"},
@@ -20,7 +20,7 @@ var textTests = []struct {
 }
 
 var sixtyFourTests = []struct {
-	in string
+	in  string
 	out uint64
 }{
 	{"STEAM_0:1:82174", 76561197960430077},
@@ -30,7 +30,7 @@ var sixtyFourTests = []struct {
 }
 
 var steam3Tests = []struct {
-	in string
+	in  string
 	out string
 }{
 	{"STEAM_0:1:82174", "[U:1:164349]"},
@@ -40,7 +40,7 @@ var steam3Tests = []struct {
 }
 
 var vanityTests = []struct {
-	in string
+	in  string
 	out uint64
 }{
 	{"http://steamcommunity.com/id/panvertigo/", 76561198000670105},
@@ -98,7 +98,7 @@ func TestConvertVanityTo64(t *testing.T) {
 		//test server to respond json
 		handler := func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(200)
-    	w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Type", "application/json")
 			w.Write(b)
 		}
 		ts := httptest.NewServer(http.HandlerFunc(handler))
